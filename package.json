@@ -1,6 +1,6 @@
 {
   "name": "perfecto",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Minimalistic functional JS validation library",
   "author": "Nikolay Karev",
   "scripts": {
