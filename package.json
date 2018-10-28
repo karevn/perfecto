@@ -25,6 +25,10 @@
   ],
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/karevn/perfecto.git"
+  },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
