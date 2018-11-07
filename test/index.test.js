@@ -54,6 +54,7 @@ describe("#nest()", () => {
       })
     ).resolves.toEqual([{ path: ["bar", "foo"], message: "error", object: {} }])
   })
+
   it("All ok if there are no errors", () => {
     return expect(
       nest(["bar"], [present("error", ["foo"])], {
@@ -74,7 +75,7 @@ describe("Ramda", () => {
 })
 
 describe("#array()", () => {
-  it("add index to errors", () => {
+  it("add array index to errors", () => {
     const object = { bar: [{ yo: "fo" }] }
     return expect(
       nest(["bar"], [array([present("error", ["foo"])])])({
@@ -82,6 +83,7 @@ describe("#array()", () => {
       })
     ).resolves.toEqual([{ path: ["bar", 0, "foo"], message: "error", object }])
   })
+
   it("dont add anything if there are no array errors", () => {
     const object = { bar: [{ foo: true }, { foo: true }] }
     return expect(
