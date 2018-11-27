@@ -3,7 +3,8 @@
   "rules": {
     "arrow-parens": [2, "as-needed"],
     "space-before-function-paren": "off",
-    "quotes": [1, "double"]
+    "quotes": [1, "double"],
+    "semi": [1, "always"]
   },
   "plugins": ["eslint-plugin-jest"],
   "parser": "babel-eslint",
