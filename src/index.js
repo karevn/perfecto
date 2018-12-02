@@ -2,85 +2,106 @@ import {
   addIndex,
   complement,
   compose,
+  composeP,
   concat,
   curry,
   filter,
   flatten,
   isNil,
-  lensProp,
+  identity,
   map,
   path as getPath,
-  pipe,
-  pipeP,
   prop,
-  view
+  propOr,
+  ifElse,
+  always,
+  pathOr
 } from "ramda";
+
 const mapIndexed = addIndex(map);
 const allPromises = Promise.all.bind(Promise);
 const resolve = Promise.resolve.bind(Promise);
-const runIn = curry((context, validator) => validator(context));
-const hasError = compose(
-  complement(isNil),
-  prop("message")
+const runIn = context => validator => validator(context);
+const getPathProp = propOr([], "path");
+const isPresent = complement(isNil);
+const isPresentFilter = filter(isPresent);
+const getValue = compose(
+  getPath,
+  getPathProp
 );
-const objectLens = lensProp("object");
-const getPathProp = prop("path");
+const getPathOrArray = pathOr([]);
+const getObject = prop("object");
+const getNull = always(null);
+
+const runAllInContext = context =>
+  compose(
+    allPromises,
+    compose(
+      map,
+      runIn
+    )(context)
+  );
 
 export const validate = curry(function validate(validators, context) {
-  const runAll = pipe(
-    map(runIn(context)),
-    allPromises
-  );
-  return pipeP(
-    runAll,
+  return composeP(
+    isPresentFilter,
     flatten,
-    filter(hasError)
+    runAllInContext(context)
   )(validators);
 });
 
-const decide = curry(function decide(context, message, valid) {
-  return valid ? context : { ...context, message };
-});
+const createError = (context, message) =>
+  always({
+    path: getPathProp(context),
+    message
+  });
 
 export const check = curry(function check(func, message, context) {
-  const v = pipe(
-    view(objectLens),
-    getPath(context.path || []),
+  const validate = compose(
+    resolve,
     func,
-    resolve
+    getValue(context),
+    getObject
   );
-  return pipeP(
-    v,
-    decide(context, message)
+  return composeP(
+    ifElse(identity, getNull, createError(context, message)),
+    validate
   )(context);
 });
 
-const concatPath = (path, context) => concat(getPathProp(context) || [], path);
+const nestPath = (path, context) => concat(getPathProp(context), path);
+const withNestedPath = (context, path) => ({
+  ...context,
+  path: nestPath(path, context)
+});
 
 export const path = curry(function path(func, message, path, context) {
-  return check(func, message, { ...context, path: concatPath(path, context) });
+  return check(func, message, withNestedPath(context, path));
 });
 
 export const nest = curry(function nest(nestPath, validators, context) {
-  return validate(validators, {
-    ...context,
-    path: concatPath(nestPath, context)
-  });
+  return validate(validators, withNestedPath(context, nestPath));
 });
 
 export const array = curry(function array(validators, context) {
-  const values = getPath(context.path, context.object);
-  if (!values) {
-    return resolve([]);
-  }
-  return allPromises(
-    mapIndexed(
-      (value, index) =>
-        validate(validators, {
-          ...context,
-          path: concatPath([index], context)
-        }),
-      values
+  return compose(
+    allPromises,
+    mapIndexed((_, index) => nest([index], validators, context)),
+    getPathOrArray(getPathProp(context)),
+    getObject
+  )(context);
+});
+
+export const predicate = curry(function predicate(
+  predicateFunc,
+  validators,
+  context
+) {
+  return composeP(
+    ifElse(identity, () => validate(validators, context), always([])),
+    compose(
+      resolve,
+      predicateFunc
     )
-  );
+  )(context);
 });
