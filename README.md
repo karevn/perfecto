@@ -71,19 +71,39 @@ validate([fatherIsDarth], {
 ```js
 import { validate, check, array } from "perfecto";
 
-const isJediPredicate = person => person.isJedi;
+const isJediPredicate = person => !!person.isJedi;
 // Checks if the person is Jedi
 const isJedi = check(isJediPredicate, "Jedi is he not!");
 
-const everyoneIsAJedi = array(isJedi);
+const everyoneIsAJedi = array([isJedi]);
 
-validate(
-  [everyoneIsAJedi],
-  [
+validate([everyoneIsAJedi], {
+  object: [
     { name: "Han" },
-    { name: "Luke, isJedi: true" },
+    { name: "Luke", isJedi: true },
     { name: "Darth Vader", isJedi: true }
   ]
-).then(console.info);
-// Output: [{path: ["father", "name"], message: "His father is darth vader not!"}]
+}).then(console.info);
+```
+
+### Conditional validation
+
+[Play with it at CodeSandbox](https://codesandbox.io/s/8zz3nk8470)
+
+```js
+import { validate, check, path, predicate, array } from "perfecto";
+
+const isJediPredicate = person => !!person.isJedi;
+// Checks if the person is Jedi
+const isJedi = check(isJediPredicate, "Jedi is he not!");
+const isPresentPredicate = value => !!value;
+const hasSword = path(isPresentPredicate, "Should be there", ["sword"]);
+
+const isJediCheck = context => context.object[context.path[0]].isJedi;
+
+// Luke is a Jedi so he has to have a sword... But he does not for some reason
+// And Han is not a Jedi at all :)
+validate([array([predicate(isJediCheck, [hasSword])])], {
+  object: [{ name: "Luke", isJedi: true }, { name: "Han", isJedi: false }]
+}).then(console.info);
 ```
