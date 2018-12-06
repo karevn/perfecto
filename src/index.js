@@ -18,7 +18,8 @@ import {
   pathOr,
   set,
   lensPath,
-  reduce
+  reduce,
+  isEmpty
 } from "ramda";
 
 const mapIndexed = addIndex(map);
@@ -112,7 +113,11 @@ export const predicate = curry(function predicate(
 const addFormikError = (errors, error) =>
   set(lensPath(error.path), error.message, errors);
 export const mapToFormikErrors = reduce(addFormikError, {});
+const throwError = error => {
+  throw error;
+};
 export const validateFormik = composeP(
+  ifElse(isEmpty, throwError, identity),
   mapToFormikErrors,
   validate
 );

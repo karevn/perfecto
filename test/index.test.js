@@ -5,7 +5,8 @@ import {
   path,
   check,
   predicate,
-  mapToFormikErrors
+  mapToFormikErrors,
+  validateFormik
 } from "../src";
 import * as R from "ramda";
 const notPresentPredicate = R.or(R.isNil, R.isEmpty);
@@ -189,6 +190,15 @@ describe("#mapToFormikErrors", () => {
       mapToFormikErrors([{ path: ["foo", 0, "foo2"], message: "bar" }])
     ).toEqual({
       foo: [{ foo2: "bar" }]
+    });
+  });
+});
+
+describe("#validateFormik", () => {
+  it("throws errors if any", () => {
+    const validator = [presentP("is required", ["name"])];
+    expect(validateFormik(validator, {})).rejects.toEqual({
+      name: "is required"
     });
   });
 });
