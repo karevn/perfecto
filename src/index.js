@@ -117,7 +117,7 @@ const throwError = error => {
   throw error;
 };
 export const validateFormik = composeP(
-  ifElse(isEmpty, throwError, identity),
+  ifElse(isEmpty, identity, throwError),
   mapToFormikErrors,
   validate
 );

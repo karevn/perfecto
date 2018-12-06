@@ -196,8 +196,8 @@ describe("#mapToFormikErrors", () => {
 
 describe("#validateFormik", () => {
   it("throws errors if any", () => {
-    const validator = [presentP("is required", ["name"])];
-    expect(validateFormik(validator, {})).rejects.toEqual({
+    const validator = [present("is required", ["name"])];
+    return expect(validateFormik(validator, { object: {} })).rejects.toEqual({
       name: "is required"
     });
   });
