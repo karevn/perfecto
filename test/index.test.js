@@ -1,4 +1,12 @@
-import { validate, nest, array, path, check, predicate } from "../src";
+import {
+  validate,
+  nest,
+  array,
+  path,
+  check,
+  predicate,
+  mapToFormikErrors
+} from "../src";
 import * as R from "ramda";
 const notPresentPredicate = R.or(R.isNil, R.isEmpty);
 export const present = path(R.complement(notPresentPredicate));
@@ -158,5 +166,29 @@ describe("#predicate()", () => {
         object: { name: "Luke", isJedi: true }
       })
     ).resolves.toEqual([{ path: ["sword"], message: "Got no sword" }]);
+  });
+});
+
+describe("#mapToFormikErrors", () => {
+  it("transforms simple paths to Formik errors", () => {
+    expect(mapToFormikErrors([{ path: ["foo"], message: "bar" }])).toEqual({
+      foo: "bar"
+    });
+  });
+
+  it("transforms nested paths to Formik errors", () => {
+    expect(
+      mapToFormikErrors([{ path: ["foo", "foo2"], message: "bar" }])
+    ).toEqual({
+      foo: { foo2: "bar" }
+    });
+  });
+
+  it("transforms nested array paths to Formik errors", () => {
+    expect(
+      mapToFormikErrors([{ path: ["foo", 0, "foo2"], message: "bar" }])
+    ).toEqual({
+      foo: [{ foo2: "bar" }]
+    });
   });
 });

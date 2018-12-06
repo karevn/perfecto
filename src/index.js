@@ -15,7 +15,10 @@ import {
   propOr,
   ifElse,
   always,
-  pathOr
+  pathOr,
+  set,
+  lensPath,
+  reduce
 } from "ramda";
 
 const mapIndexed = addIndex(map);
@@ -59,7 +62,7 @@ const createError = (context, message) =>
 export const check = curry(function check(func, message, context) {
   const validate = compose(
     resolve,
-    func,
+    value => func(value, context, message),
     getValue(context),
     getObject
   );
@@ -105,3 +108,11 @@ export const predicate = curry(function predicate(
     )
   )(context);
 });
+
+const addFormikError = (errors, error) =>
+  set(lensPath(error.path), error.message, errors);
+export const mapToFormikErrors = reduce(addFormikError, {});
+export const validateFormik = composeP(
+  mapToFormikErrors,
+  validate
+);
