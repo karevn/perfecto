@@ -6,7 +6,7 @@ import {
   check,
   predicate,
   mapToFormikErrors,
-  validateFormik
+  validateForm
 } from "../src";
 import * as R from "ramda";
 const notPresentPredicate = R.or(R.isNil, R.isEmpty);
@@ -153,21 +153,19 @@ describe("#predicate()", () => {
     R.prop("object")
   );
 
-  it("omits validators if predicate returns false", () => {
-    return expect(
+  it("omits validators if predicate returns false", () =>
+    expect(
       validate([predicate(isJediCheck, [hasSword])], {
         object: { name: "Luke", sword: "Lightsword", isJedi: true }
       })
-    ).resolves.toEqual([]);
-  });
+    ).resolves.toEqual([]));
 
-  it("runs validators if predicate returns true", () => {
-    return expect(
+  it("runs validators if predicate returns true", () =>
+    expect(
       validate([predicate(isJediCheck, [hasSword])], {
         object: { name: "Luke", isJedi: true }
       })
-    ).resolves.toEqual([{ path: ["sword"], message: "Got no sword" }]);
-  });
+    ).resolves.toEqual([{ path: ["sword"], message: "Got no sword" }]));
 });
 
 describe("#mapToFormikErrors", () => {
@@ -194,11 +192,14 @@ describe("#mapToFormikErrors", () => {
   });
 });
 
-describe("#validateFormik", () => {
-  it("throws errors if any", () => {
-    const validator = [present("is required", ["name"])];
-    return expect(validateFormik(validator, { object: {} })).rejects.toEqual({
+describe("#validateForm", () => {
+  const validator = [present("is required", ["name"])];
+
+  it("throws errors if any", () =>
+    expect(validateForm(validator, {})).rejects.toEqual({
       name: "is required"
-    });
-  });
+    }));
+
+  it("resolves to an empty object if all is fine", () =>
+    expect(validateForm(validator, { name: "Luke" })).resolves.toEqual({}));
 });

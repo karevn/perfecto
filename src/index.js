@@ -116,8 +116,9 @@ export const mapToFormikErrors = reduce(addFormikError, {});
 const throwError = error => {
   throw error;
 };
-export const validateFormik = composeP(
+
+export const validateForm = composeP(
   ifElse(isEmpty, identity, throwError),
   mapToFormikErrors,
-  validate
+  curry((validators, object) => validate(validators, { object }))
 );
