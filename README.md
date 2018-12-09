@@ -1,6 +1,6 @@
 # Perfecto
 
-A tiny declarative validation framework. Some people may call it a "specification framework". It helps you to
+A tiny dead-simple declarative validation framework. Some people may call it a "specification framework". It helps you to
 build your validators by composing simple error checkers aka predicates to build a final function, that's going
 to receive your state or form data and return a promise resolving to the array of the errors found.
 
@@ -17,26 +17,74 @@ npm install perfecto --save
 Perfecto was initially designed to work as an asynchronous validation framework used with [redux-form](https://redux-form.com/). It also works great with [Formik](https://github.com/jaredpalmer/formik) and was
 used as the go-to server-side validation library.
 
-### Simple validation with synchronous predicate
+## Features
+
+- Asynchronous by nature, but usable with synchronous validators with no efforts.
+- Parallel validation for asynchronous validation operations.
+- Full access to the validated object (at will).
+- Composable.
+- Code reuse between front- and backend (if you know how to DI).
+- Curried validator functions.
+
+## Examples
+
+[Formik validation - shamelessly stolen from Formik demo with some polish](https://codesandbox.io/s/ypyy4m05pv)
+
+[Redux Form validation - stolen from Redux-Form async validatione example](https://codesandbox.io/s/24no1mpwy0)
+
+### Asynchronous validation
+
+### Express server-side validation
+
+```js
+const perfecto = require("perfecto");
+
+const isPresent = value => !!value;
+const isPresentValidator = perfecto.path(isPresent, "is required!");
+
+// We only do some basic validation in this case
+const orderValidator = perfecto.validate([
+  isPresentValidator(["name"]),
+  isPresentValidator(["address"]),
+  isPresentValidator(["product"])
+]);
+
+module.exports = async (req, resp, next) => {
+  const order = req.body;
+  const errors = await orderValidator(order);
+  // Errors array contains the list of the error paths and messages, if any
+  if (errors.length) {
+    res.send({ errors });
+  } else {
+    res.send({ ok: true });
+  }
+};
+```
+
+### Validator with direct access to the object
 
 [Play with it at CodeSandbox](https://codesandbox.io/s/94zm4orvw4)
 
 ```js
-import { path, validate } from "perfecto";
+import renderErrors from "./errors";
 
-const isPresentPredicate = (value, validationContext) => !!value;
+import { validate, check, array } from "perfecto";
+
+const isTheOnlyJediPredicate = (value, validationContext) =>
+  validationContext.object.length === 1 && value.isJedi;
 // Build a validator with an error message used when the predicate returns falsy value.
-const isPresentValidator = path(isPresentPredicate, "This field is required");
-const person = {
-  firstName: "Luke",
-  lastName: ""
-};
-const personValidator = [
-  isPresentValidator(["firstName"]),
-  isPresentValidator(["lastName"])
+const isTheOnlyValidator = check(
+  isTheOnlyJediPredicate,
+  "The only should he be"
+);
+const people = [
+  {
+    name: "Luke",
+    isJedi: true
+  },
+  { name: "Obi Wan", isJedi: true }
 ];
-validate(personValidator, { object: person }).then(console.info);
-// Output: [{path: ["lastName"], message: "This field is required"}]
+validate([array([isTheOnlyValidator])], { object: people }).then(console.info);
 ```
 
 ### Nested objects
