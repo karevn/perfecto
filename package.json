@@ -1,56 +1,56 @@
 {
-  "name": "perfecto",
-  "version": "0.3.6",
-  "description": "Minimalistic functional JS validation library",
-  "author": "Nikolay Karev",
-  "scripts": {
-    "test": "jest",
-    "build:es": "cross-env BABEL_ENV=es babel src --out-dir dist/es",
-    "build:cjs": "cross-env BABEL_ENV=cjs babel src --out-dir dist/cjs",
-    "build:umd": "cross-env NODE_ENV=development rollup -c -o dist/umd/perfecto.js",
-    "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/umd/perfecto.min.js",
-    "build": "npm run build:es && npm run build:cjs && npm run build:umd && npm run build:umd:min",
-    "clean": "rimraf dist/* coverage/*",
-    "coverage": "jest --coverage",
-    "prepare": "npm run clean && npm run build"
-  },
-  "license": "MIT",
-  "dependencies": {
-    "ramda": "^0.27.0"
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE.txt"
-  ],
-  "main": "dist/cjs/index.js",
-  "module": "dist/es/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/karevn/perfecto.git"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.5",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^25.3.0",
-    "cross-env": "^7.0.2",
-    "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-jest": "^23.8.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "jest": "^25.3.0",
-    "prettier": "^2.0.4",
-    "prettier-eslint": "^9.0.1",
-    "regenerator-runtime": "^0.12.1",
-    "rimraf": "^3.0.2",
-    "rollup": "^2.3.4",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^5.3.0"
-  }
+    "name": "perfecto",
+    "version": "0.3.7",
+    "description": "Minimalistic functional JS validation library",
+    "author": "Nikolay Karev",
+    "scripts": {
+        "test": "jest",
+        "build:es": "cross-env BABEL_ENV=es babel src --out-dir dist/es",
+        "build:cjs": "cross-env BABEL_ENV=cjs babel src --out-dir dist/cjs",
+        "build:umd": "cross-env NODE_ENV=development rollup -c -o dist/umd/perfecto.js",
+        "build:umd:min": "cross-env NODE_ENV=production rollup -c -o dist/umd/perfecto.min.js",
+        "build": "npm run build:es && npm run build:cjs && npm run build:umd && npm run build:umd:min",
+        "clean": "rimraf dist/* coverage/*",
+        "coverage": "jest --coverage",
+        "prepare": "npm run clean && npm run build"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "ramda": "^0.27.0"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE.txt"
+    ],
+    "main": "dist/cjs/index.js",
+    "module": "dist/es/index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/karevn/perfecto.git"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.8.4",
+        "@babel/core": "^7.9.0",
+        "@babel/preset-env": "^7.9.5",
+        "babel-core": "^7.0.0-bridge.0",
+        "babel-eslint": "^10.1.0",
+        "babel-jest": "^25.3.0",
+        "cross-env": "^7.0.2",
+        "eslint": "^6.8.0",
+        "eslint-config-standard": "^14.1.1",
+        "eslint-plugin-import": "^2.20.2",
+        "eslint-plugin-jest": "^23.8.2",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.1",
+        "jest": "^25.3.0",
+        "prettier": "^2.0.4",
+        "prettier-eslint": "^9.0.1",
+        "regenerator-runtime": "^0.12.1",
+        "rimraf": "^3.0.2",
+        "rollup": "^2.3.4",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-terser": "^5.3.0"
+    }
 }
