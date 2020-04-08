@@ -29,22 +29,13 @@ const runIn = context => validator => validator(context);
 const getPathProp = propOr([], "path");
 const isPresent = complement(isNil);
 const isPresentFilter = filter(isPresent);
-const getValue = compose(
-  getPath,
-  getPathProp
-);
+const getValue = compose(getPath, getPathProp);
 const getPathOrArray = pathOr([]);
 const getObject = prop("object");
 const getNull = always(null);
 
 const runAllInContext = context =>
-  compose(
-    allPromises,
-    compose(
-      map,
-      runIn
-    )(context)
-  );
+  compose(allPromises, compose(map, runIn)(context));
 
 export const validate = curry(function validate(validators, context) {
   return composeP(
@@ -103,10 +94,7 @@ export const predicate = curry(function predicate(
 ) {
   return composeP(
     ifElse(identity, () => validate(validators, context), always([])),
-    compose(
-      resolve,
-      predicateFunc
-    )
+    compose(resolve, predicateFunc)
   )(context);
 });
 
